@@ -88,6 +88,60 @@ Redash supports more than 35 SQL and NoSQL [data sources](https://redash.io/help
 * Want to report a bug or request a feature? Please open [an issue](https://github.com/getredash/redash/issues/new).
 * Want to help us build **_Redash_**? Fork the project, edit in a [dev environment](https://redash.io/help-onpremise/dev/guide.html) and make a pull request. We need all the help we can get!
 
+#### Using JWT Auth
+Set environment variables
+```
+REDASH_JWT_AUTH_ISSUER - jwt issuer
+REDASH_JWT_AUTH_PUBLIC_CERTS_URL - url hosting jwt public key
+REDASH_JWT_AUTH_AUDIENCE - jwt audience
+REDASH_JWT_AUTH_ALGORITHMS - HS256,RS256,ES256
+REDASH_JWT_AUTH_PARAM_NAME - url param for jwt token
+```
+
+Generating JWT public and private keys
+```
+ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key
+openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
+```
+
+Creating JWT token via private key
+```javascript
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const privateKey = fs.readFileSync('<path to private_key>');
+const token = jwt.sign(
+    {email: '<email>'}, //email is a necessary field
+    {key: privateKey, passphrase: <passphrase>},
+    {algorithm: 'RS256', audience:<audience>', issuer:'<issuer>', expiresIn:"7d" });
+console.log(token);
+```
+
+Hosting jwt public key
+```javascript
+const http = require('http');
+
+const hostname = '0.0.0.0';
+const port = 3000;
+
+const server = http.createServer((req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    const key = ['<public_key>']
+    res.end(JSON.stringify(
+        key
+    ));
+});
+
+server.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
+});
+```
+
+To add support for viewer group, run the query
+```
+INSERT into groups(org_id, type, name, permissions, created_at) VALUES (1, 'regular', 'viewer', '{list_dashboards}', NOW());
+```
+
 ## Security
 
 Please email security@redash.io to report any security vulnerabilities. We will acknowledge receipt of your vulnerability and strive to send you regular updates about our progress. If you're curious about the status of your disclosure please feel free to email us again. If you want to encrypt your disclosure email, you can use [this PGP key](https://keybase.io/arikfr/key.asc).
