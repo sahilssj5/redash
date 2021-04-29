@@ -30,16 +30,16 @@ MULTI_BYTE_SEARCH_ENABLED = parse_boolean(
     os.environ.get("MULTI_BYTE_SEARCH_ENABLED", "false")
 )
 
-JWT_LOGIN_ENABLED = parse_boolean(os.environ.get("REDASH_JWT_LOGIN_ENABLED", "true"))
-JWT_AUTH_ISSUER = os.environ.get("REDASH_JWT_AUTH_ISSUER", "goals101")
-JWT_AUTH_PUBLIC_CERTS_URL = os.environ.get("REDASH_JWT_AUTH_PUBLIC_CERTS_URL", "http://192.168.0.12:3000/")
-JWT_AUTH_AUDIENCE = os.environ.get("REDASH_JWT_AUTH_AUDIENCE", "redash")
+JWT_LOGIN_ENABLED = parse_boolean(os.environ.get("REDASH_JWT_LOGIN_ENABLED", "false"))
+JWT_AUTH_ISSUER = os.environ.get("REDASH_JWT_AUTH_ISSUER", "")
+JWT_AUTH_PUBLIC_CERTS_URL = os.environ.get("REDASH_JWT_AUTH_PUBLIC_CERTS_URL", "")
+JWT_AUTH_AUDIENCE = os.environ.get("REDASH_JWT_AUTH_AUDIENCE", "")
 JWT_AUTH_ALGORITHMS = os.environ.get(
     "REDASH_JWT_AUTH_ALGORITHMS", "HS256,RS256,ES256"
 ).split(",")
 JWT_AUTH_COOKIE_NAME = os.environ.get("REDASH_JWT_AUTH_COOKIE_NAME", "")
 JWT_AUTH_HEADER_NAME = os.environ.get("REDASH_JWT_AUTH_HEADER_NAME", "")
-JWT_AUTH_PARAM_NAME = os.environ.get("REDASH_JWT_AUTH_PARAM_NAME", "g101_jwt_token")
+JWT_AUTH_PARAM_NAME = os.environ.get("REDASH_JWT_AUTH_PARAM_NAME", "")
 
 FEATURE_SHOW_PERMISSIONS_CONTROL = parse_boolean(
     os.environ.get("REDASH_FEATURE_SHOW_PERMISSIONS_CONTROL", "false")

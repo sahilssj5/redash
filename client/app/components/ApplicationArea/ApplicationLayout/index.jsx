@@ -17,7 +17,7 @@ export default function ApplicationLayout({ children }) {
       <DynamicComponent name="ApplicationWrapper">
         <div className="application-layout-side-menu">
           <DynamicComponent name="ApplicationDesktopNavbar">
-            {currentUser.hasPermission("create-dashboard") && (
+            {currentUser.hasPermission("create_dashboard") && (
             <DesktopNavbar />
             )}
           </DynamicComponent>

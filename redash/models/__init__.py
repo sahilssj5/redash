@@ -154,7 +154,10 @@ class DataSource(BelongsToOrgMixin, db.Model):
         data_source_group = DataSourceGroup(
             data_source=data_source, group=data_source.org.default_group
         )
-        db.session.add_all([data_source, data_source_group])
+        data_source_group_viewer = DataSourceGroup(data_source=data_source,
+                                                   group=data_source.org.viewer_group,
+                                                   view_only=True)
+        db.session.add_all([data_source, data_source_group, data_source_group_viewer])
         return data_source
 
     @classmethod
