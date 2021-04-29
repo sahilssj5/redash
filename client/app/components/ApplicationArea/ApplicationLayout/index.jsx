@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import DynamicComponent from "@/components/DynamicComponent";
 import DesktopNavbar from "./DesktopNavbar";
 import MobileNavbar from "./MobileNavbar";
+import { currentUser } from "@/services/auth";
 
 import "./index.less";
 
@@ -16,7 +17,9 @@ export default function ApplicationLayout({ children }) {
       <DynamicComponent name="ApplicationWrapper">
         <div className="application-layout-side-menu">
           <DynamicComponent name="ApplicationDesktopNavbar">
+            {currentUser.hasPermission("create-dashboard") && (
             <DesktopNavbar />
+            )}
           </DynamicComponent>
         </div>
         <div className="application-layout-content">

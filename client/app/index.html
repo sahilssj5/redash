@@ -25,6 +25,19 @@
       sizes="16x16"
       href="<%= htmlWebpackPlugin.options.staticPath %>images/favicon-16x16.png"
     />
+    <script>
+      function notifyHost() {
+        window.top.postMessage({
+        height: document.body.scrollHeight,
+        width: document.body.scrollWidth
+        }, '*');
+      }
+      if (window.attachEvent) {
+        window.attachEvent('onresize', notifyHost);
+      } else if (window.addEventListener) {
+        window.addEventListener('resize', notifyHost, true);
+      }
+    </script>
   </head>
 
   <body>

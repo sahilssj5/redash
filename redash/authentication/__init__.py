@@ -172,6 +172,8 @@ def jwt_token_load_user_from_request(request):
 
     if org_settings["auth_jwt_auth_cookie_name"]:
         jwt_token = request.cookies.get(org_settings["auth_jwt_auth_cookie_name"], None)
+    elif org_settings["auth_jwt_auth_param_name"]:
+        jwt_token = request.args.get(org_settings["auth_jwt_auth_param_name"], None)
     elif org_settings["auth_jwt_auth_header_name"]:
         jwt_token = request.headers.get(org_settings["auth_jwt_auth_header_name"], None)
     else:
@@ -193,8 +195,9 @@ def jwt_token_load_user_from_request(request):
 
     try:
         user = models.User.get_by_email_and_org(payload["email"], org)
+        login_user(user, remember=True)
     except models.NoResultFound:
-        user = create_and_login_user(current_org, payload["email"], payload["email"])
+        user = create_and_login_user(current_org, payload["email"], payload["email"], None, True)
 
     return user
 
@@ -261,7 +264,7 @@ def init_app(app):
     login_manager.request_loader(request_loader)
 
 
-def create_and_login_user(org, name, email, picture=None):
+def create_and_login_user(org, name, email, picture=None, is_jwt=False):
     try:
         user_object = models.User.get_by_email_and_org(email, org)
         if user_object.is_disabled:
@@ -275,13 +278,17 @@ def create_and_login_user(org, name, email, picture=None):
             models.db.session.commit()
     except NoResultFound:
         logger.debug("Creating user object (%r)", name)
+        group_ids = [org.default_group.id]
+
+        if is_jwt:
+            group_ids = [org.viewer_group.id]
         user_object = models.User(
             org=org,
             name=name,
             email=email,
             is_invitation_pending=False,
             _profile_image_url=picture,
-            group_ids=[org.default_group.id],
+            group_ids=group_ids,
         )
         models.db.session.add(user_object)
         models.db.session.commit()
